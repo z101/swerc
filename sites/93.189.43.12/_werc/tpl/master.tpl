@@ -1,85 +1,60 @@
 <!doctype html>
 <html>
-<head> 
-	<title>%($pageTitle%)</title>
-	<link rel="stylesheet" type="text/css" href="/pub/style.css">
-	<meta charset="utf-8"> 
-</head> 
-<body>
-	<div id="header">
-		%($"siteTitle%) <span id="headerSubtitle">%($"siteSubtitle%)</span>
-	</div>
+	<head>
+		<title>%($pageTitle%)</title>
+		<meta charset="UTF-8"> 
+		<style type="text/css">
+body {
+	background-color: #202020;
+	color: #bbbbbb;
+	font-family: monospace;
+	font-size: 12pt;
+	padding: 0;
+	margin: 0;
+}
 
-	<div id="menu">
-		<span class="left">
-% if(~ $site 'suckless.org') {
-		<a class="thisSite" href="http://suckless.org">home</a>
-% }
-% if not {
-		<a href="http://suckless.org">home</a>
-% }
-% if(~ $site 'dwm.suckless.org') {
-		<a class="thisSite" href="http://dwm.suckless.org">dwm</a>
-% }
-% if not {
-		<a href="http://dwm.suckless.org">dwm</a>
-% }
-% if(~ $site 'st.suckless.org') {
-		<a class="thisSite" href="http://st.suckless.org">st</a>
-% }
-% if not {
-		<a href="http://st.suckless.org">st</a>
-% }
-% if(~ $site 'sta.li') {
-		<a class="thisSite" href="http://sta.li">stali</a>
-% }
-% if not {
-		<a href="http://sta.li">stali</a>
-% }
-% if(~ $site 'surf.suckless.org') {
-		<a class="thisSite" href="http://surf.suckless.org">surf</a>
-% }
-% if not {
-		<a href="http://surf.suckless.org">surf</a>
-% }
-% if(~ $site 'tools.suckless.org') {
-		<a class="thisSite" href="http://tools.suckless.org">tools</a>
-% }
-% if not {
-		<a href="http://tools.suckless.org">tools</a>
-% }
-		</span>
-		<span class="right">
-			<a href="http://dl.suckless.org">download</a>
-			<a href="http://git.suckless.org">source</a>
-		</span>
-	</div>
+#header {
+	clear: both;
+	padding: 5px 10px 20px 10px;
+}
 
-	<div id="content">
-% if(! ~ $#handlers_bar_left 0) {
-	<div id="nav">
-%   for(h in $handlers_bar_left) {
-%       run_handler $$h
-%   }
-	</div>
-% }
+#headertitle {
+	color: #3465a4;
+	font-size: 2em;
+}
 
-	<div id="main">
+#headerinfo {
+	color: #777777;
+	font-size: 0.8em;
+	float: right;
+}
 
-% run_handlers $handlers_body_head
+#content {
+	clear: both;
+	overflow: hidden;
+}
 
+.block {
+	display: inline-block;
+	float: left;
+	margin: 0px 0px 20px 10px;
+}
+
+.block-header {
+	color: #eeeeec;
+	font-size: 1.1em;
+	margin-bottom: 10px;
+}
+	</style> 
+	</head> 
+	<body>
+		<div id="header">
+			<span id="headertitle">%($"siteTitle%)</span>
+			<span id="headerinfo">2015-2016 yumi development server | quark &amp; swerc powered</span>
+		</div>
+		<div id="content">
 % run_handler $handler_body_main
-
-% run_handlers $handlers_body_foot
-
-	</div>
-
-	</div>
-
-	<div id="footer">
-	<span class="right">
-	&copy; 2006-2013 suckless.org community | <a href="http://garbe.us/Contact">Impressum</a>
-	</span>
-	</div>
-</body>
+		</div>
+	</body>
 </html>
+

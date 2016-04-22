@@ -55,6 +55,10 @@ fn werc_exec_request {
         perm_redirect `{echo $req_path | sed 's/[.,;:)]$//'}
     if not if(test -d $local_path)
         perm_redirect $req_path^'/'
+	if (! ~ $#base_url_default 0) {
+		if (! ~ $"base_url $"base_url_default)
+			perm_redirect $"base_url_default
+	}
 
     if(! ~ $#args 0)
         ifs=$NEW_LINE { pageTitle=`{ echo $args|sed -e 's/ / - /g' -e 's/([a-z])-([a-z])/\1 \2/g' -e 's/_/ /g' } }
@@ -91,7 +95,6 @@ fn werc_exec_request {
     }
 
     setup_handlers
-
 
     # Set Page title
     if(! ~ $local_file '') {
