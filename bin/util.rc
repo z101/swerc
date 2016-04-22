@@ -16,7 +16,7 @@ Location: '^$t^'
 '
     exit
 }
-fn perm_redirect { http_redirect $1 '301 Moved Permanantly' }
+fn perm_redirect { http_redirect $1 '301 Moved Permanently' }
 
 # This seems slightly improve performance, but might depend on httpd buffering behavior.
 fn awk_buffer {
