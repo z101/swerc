@@ -15,17 +15,16 @@ body {
 
 #header {
 	clear: both;
-	padding: 5px 10px 20px 10px;
+	overflow: hidden;
+	padding: 2px 5px 5px 0px;
 }
 
 #headertitle {
 	color: #3465a4;
-	font-size: 2em;
 }
 
 #headerinfo {
 	color: #777777;
-	font-size: 0.8em;
 	float: right;
 }
 
@@ -49,12 +48,10 @@ body {
 	</head> 
 	<body>
 		<div id="header">
-			<span id="headertitle">%($"siteTitle%)</span>
-			<span id="headerinfo">2015-2016 yumi development server | quark &amp; swerc powered</span>
+			<span id="headerinfo">2015-2016 <span id="headertitle">%($"siteTitle%)</span> development server</span>
 		</div>
 		<div id="content">
 % run_handler $handler_body_main
 		</div>
 	</body>
 </html>
-
