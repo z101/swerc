@@ -48,7 +48,7 @@ body {
 	</head> 
 	<body>
 		<div id="header">
-			<span id="headerinfo">2015-2016 <span id="headertitle">%($"siteTitle%)</span> development server</span>
+			<span id="headerinfo"><span id="headertitle">%($"siteTitle%)</span> %($"siteSubtitle%)</span>
 		</div>
 		<div id="content">
 % run_handler $handler_body_main

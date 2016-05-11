@@ -29,6 +29,9 @@ fn werc_exec_request {
     site=$SERVER_NAME
     base_url=http://$site
     sitedir=$sitesdir/$site
+	if (! ~ $#default_site 0) {
+		sitedir=$sitesdir/default
+	}
     master_template=`{get_tpl_file master.tpl}
     current_date_time=`{date}
 
@@ -55,10 +58,6 @@ fn werc_exec_request {
         perm_redirect `{echo $req_path | sed 's/[.,;:)]$//'}
     if not if(test -d $local_path)
         perm_redirect $req_path^'/'
-	if (! ~ $#base_url_default 0) {
-		if (! ~ $"base_url $"base_url_default)
-			perm_redirect $"base_url_default
-	}
 
     if(! ~ $#args 0)
         ifs=$NEW_LINE { pageTitle=`{ echo $args|sed -e 's/ / - /g' -e 's/([a-z])-([a-z])/\1 \2/g' -e 's/_/ /g' } }
@@ -114,13 +113,10 @@ fn werc_exec_request {
     echo 'Content-Type: '^$http_content_type
     echo # End of HTTP headers
 
-    if(! ~ $#debug 0)
-        dprint $"SERVER_NAME^$"REQUEST_URI - $"HTTP_USER_AGENT - $"REQUEST_METHOD - $"handler_body_main - $"master_template
-
     if(~ $REQUEST_METHOD HEAD)
         exit
     
     template $master_template | awk_buffer
 }
 
-werc_exec_request  >[2]/tmp/wercdebug.log
+werc_exec_request
