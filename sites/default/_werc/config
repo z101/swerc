@@ -1,7 +1,4 @@
 siteTitle=yumi
 siteSubtitle=machine
 
-if (! ~ $#base_url_default 0) {
-	if (! ~ $"base_url $"base_url_default)
-		perm_redirect $"base_url_default
-}
+dprint `{ echo $REQUEST_RAW | grep User-Agent }
