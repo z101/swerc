@@ -1,3 +1,23 @@
+fn get_bin_file {
+	if(test -f $sitedir/_werc/bin/$1)
+		echo -n $sitedir/_werc/bin/$1
+	if not if(test -f bin/$1)
+		echo -n bin/$1
+	if not
+		status='Can''t find bin file: '$1
+}
+
+fn render_block {
+	echo '<div class="block">
+	<div class="block-header">'^$1^'</div>
+'^$2^'
+</div>'
+}
+
+fn render_wslog {
+	render_block 'Web Service Log' $"info
+}
+
 siteTitle=yumi
 siteSubtitle=machine
 

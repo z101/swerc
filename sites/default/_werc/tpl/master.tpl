@@ -24,7 +24,6 @@ body {
 }
 
 #headerinfo {
-	color: #777777;
 	float: right;
 }
 
