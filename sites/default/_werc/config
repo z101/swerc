@@ -7,6 +7,12 @@ fn get_bin_file {
 		status='Can''t find bin file: '$1
 }
 
+fn htmlize {
+	text=''
+	for(i) text=$text^$i^'<br/>'
+	echo $"text | sed 's/ /\&nbsp;/g'
+}
+
 fn render_block {
 	echo '<div class="block">
 	<div class="block-header">'^$1^'</div>
@@ -14,11 +20,18 @@ fn render_block {
 </div>'
 }
 
-fn render_wslog {
-	render_block 'Web Service Log' $"info
+fn render_wslogrpt {
+	log=/var/log/quark.log
+	if(test -f $log) {
+		lsz=`{du -n $log | awk '{print $1}'}
+		ifs=$NEW_LINE { rpt=`{awk -v 'lsz='^$"lsz -f `{get_bin_file wslogrpt.awk} $log} }
+	}
+	if not
+		rpt='Log file is not found.'
+	render_block 'Web Service Log Report' `{htmlize $rpt}
 }
 
 siteTitle=yumi
 siteSubtitle=machine
 
-dprint `{ echo $REQUEST_RAW | grep User-Agent }
+#dprint $REQUEST_RAW

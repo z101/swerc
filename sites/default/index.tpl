@@ -1,1 +1,1 @@
-% render_wslog
+% render_wslogrpt
