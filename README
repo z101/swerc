@@ -1,9 +1,3 @@
-TODO
-----
-
-1. Fix quark HTTP header problem
-2. Make default site - if default base url is specified, swerc should use "default" site dir
-
 swerc - a minimalist document management system
 -----------------------------------------------
 
