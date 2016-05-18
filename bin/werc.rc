@@ -26,6 +26,9 @@ if not
     . ./etc/initrc
 
 fn werc_exec_request {
+	hstatus=200
+	logreq
+
     site=$SERVER_NAME
     base_url=http://$site
     sitedir=$sitesdir/$site
@@ -108,8 +111,13 @@ fn werc_exec_request {
     if not
         pageTitle=$"pageTitle' | '$"siteTitle' '$"siteSubtitle
 
-    for(h in $extraHttpHeaders)
+	if(~ $"hstatus 200)
+		logres 'Status: 200 OK'
+    for(h in $extraHttpHeaders) {
+		log $h
         echo $h
+	}
+	log 'Content-Type: '^$http_content_type
     echo 'Content-Type: '^$http_content_type
     echo # End of HTTP headers
 

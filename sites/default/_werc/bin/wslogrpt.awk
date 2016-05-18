@@ -3,6 +3,6 @@
 # lsz - log size in bytes
 
 END {
-	printf("Log file size  : %.2f KB\n", lsz/1024)
-	printf("Log lines count: %s\n", NR)
+	printf("log file size  : %.2f MB\n", lsz/1024/1024)
+	printf("log lines count: %s\n", NR)
 }

@@ -26,10 +26,8 @@ fn render_wslogrpt {
 	}
 	if not
 		rpt='Log file is not found.'
-	ifs='' { render_block 'Web Service Log Report' `{htmlize $rpt} }
+	ifs='' { render_block 'web service log report' `{htmlize $rpt} }
 }
 
 siteTitle=yumi
 siteSubtitle=machine
-
-#dprint $REQUEST_RAW
