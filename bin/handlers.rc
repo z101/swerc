@@ -97,8 +97,6 @@ fn setup_handlers {
 # This function allows config files to define their own 404 handlers.
 fn setup_404_handler {
     handler_body_main=(tpl_handler `{get_tpl_file 404.tpl})
-	hstatus=404
-	logres 'Status: 404 Not Found'
 	echo 'Status: 404 Not Found'
 }
 

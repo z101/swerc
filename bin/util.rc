@@ -3,22 +3,6 @@
 
 fn dprint { echo $* >[1=2] }
 
-fn log {
-	ifs=$NEW_LINE { for(i in `{echo $1 | sed '/^$/d;s/^/	/'}) dprint $i }
-}
-
-fn logreq {
-	dprint '	client: '^$REMOTE_ADDR
-	dprint '	>'
-	ifs='' { r=`{echo $"REQUEST_RAW | awk '{gsub("\r", ""); print $0}'} }
-	log $r
-}
-
-fn logres {
-	dprint '	<'
-	log $1
-}
-
 fn http_redirect {
     if(~ $1 http://* https://*)
         t=$1
@@ -26,13 +10,10 @@ fn http_redirect {
         t=$"base_url^$1
     if not
         t=$"base_url^$"req_path^$1
-    logres 'Status: '^$2^'
-Location: '^$t
     echo 'Status: '^$2^'
 Location: '^$t^'
 
 '
-
     exit
 }
 fn perm_redirect { http_redirect $1 '301 Moved Permanently' }
@@ -50,8 +31,6 @@ fn awk_buffer {
 }
 
 fn static_file {
-	logres 'Status: 200 OK
-Content-type: '`{select_mime $1}
     echo 'Content-Type: '`{select_mime $1}
     echo
     cat $1

@@ -3,105 +3,107 @@
 # lsz - log size in bytes
 
 function alength(a,j) {
-	for(i in a)
-		if(i != "")
+	for (i in a)
+		if (i != "")
 			j++
 	return j
 }
 
 BEGIN {
-	# START - beginning of the file
-	# BLOCK - log block
-	# INFO - info block
-	# REQUEST - request block
-	# RESPONSE - response block
-	# DATA - log data
-	cursec="START"
-
-	counters[""]=0
-	malformed[""]=0
-	errors[""]=0
-	sortcmd="sort -n"
+	counters[""] = 0
+	req[""] = 0
+	ip[""] = 0
+	ua[""] = 0
+	errors[""] = 0
+	freefmt[""] = 0
+	sortcmd = "sort -nr"
 }
-/^[A-Z][a-z][a-z], [0-9]+ [A-Z][a-z][a-z] [0-9]+ [0-9]+:[0-9]+:[0-9]+ GMT/ {
-	counters["block"]++
-	if(match($0, /^.*GMT	/)) {
-		dt=substr($0,1,RLENGTH-1)
-		msg=substr($0,RSTART+RLENGTH)
-	} else {
-		dt=$0
-		msg=""
+/^\./ {
+	counters["request"]++
+	if (match($0, /^\. \[[^\]]+\] \[[^\]]+\] /)) {
+		dtip = substr($0, RSTART, RLENGTH)
+		req[substr($0, RSTART + RLENGTH)]++
+		counters["get"]++
+		if (match(dtip, /\[[^\]]+\]/))
+			reqdt = substr($0, RSTART + 1, RLENGTH - 2)
+		if (match(dtip, /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/)) {
+			client = substr(dtip, RSTART, RLENGTH)
+			ip[client]++
+			counters["ip hits"]++
+		}
 	}
-	if(cursec == "START") {
-		start=dt
-	}
-	cursec="BLOCK"
-	current=dt
-	if(match(msg, "error|failure")) {
-		errors[NR]=msg
-	}
-	counters["processed"]++
+	if (length(startdt) == 0)
+		startdt = reqdt
+	current=reqdt
 	next
 }
-/^	>$/ {
-	if(cursec == "START") {
-		malformed[NR]="block expected, but request marker found"
-		counters["processed"]++
-		next
+/^	->/ {
+	if (match($0, /^	-> [uU][sS][eE][rR]-[aA][gG][eE][nN][tT]: +/)) {
+		ua[substr($0, RSTART + RLENGTH)]++
+		counters["user agents"]++
 	}
+	next
 }
-/^	<$/	{
-	if(cursec == "START") {
-		malformed[NR]="block expected, but response marker found"
-		counters["processed"]++
-		next
-	}
+/^	<-/ {
+	next
 }
-/^	[^:]+: / {
-	if(cursec == "START") {
-		malformed[NR]="block expected, but name:value pair found"
-		counters["processed"]++
-		next
-	}
+/^!/ {
+	errors[NR] = substr($0, 3)
+	next
+}
+/^\?/ {
+	next
 }
 {
-	if(cursec == "START") {
-		malformed[NR]="block expected, but free-format data found"
-		counters["processed"]++
-		next
+	if (length($0) > 0) {
+		freefmt[NR] = $0
 	}
+	next
 }
 END {
-	print "COMMON"
-	printf("    start date : %s\n", start)
+	print "common"
+	printf("    start date : %s\n", startdt)
 	printf("    finish date: %s\n", current)
 	printf("    file size  : %.2f MB\n", lsz/1024/1024)
 	print ""
-	print "COUNTERS"
+	print "counters"
 	printf("    lines count    : %s\n", NR)
-	printf("    lines processed: %s\n", counters["processed"])
-	printf("    blocks count   : %s\n", counters["block"])
-	hp=""
-	for(i in malformed) {
+	printf("    requests count : %s\n", counters["request"])
+	printf("    unique clients : %s\n", alength(ip))
+	print  "    get", "(" counters["get"] ")"
+	for(i in req) {
 		if(i != "") {
-			if(hp == "") {
-				print ""
-				print "MALFORMED"
-				hp="y"
-			}
-			printf("    %s, %s\n", i, malformed[i]) | sortcmd
+			printf("    %8s %s\n", req[i], i) | sortcmd
 		}
 	}
 	close(sortcmd)
-	hp=""
+	print  "    ip hits", "(" counters["ip hits"] ")"
+	for(i in ip) {
+		if(i != "") {
+			printf("    %8s %-15s\n", ip[i], i) | sortcmd
+		}
+	}
+	close(sortcmd)
+	print  "    user agents", "(" counters["user agents"] ")"
+	for(i in ua) {
+		if(i != "") {
+			printf("    %8s %-15s\n", ua[i], i) | sortcmd
+		}
+	}
+	close(sortcmd)
+	print ""
+	print "errors", "(" alength(errors) ")"
 	for(i in errors) {
 		if(i != "") {
-			if(hp == "") {
-				print ""
-				print "ERRORS", "(" alength(errors) ")"
-				hp="y"
-			}
-			printf("    %s, %s\n", i, errors[i]) | sortcmd
+			printf("%8s %s\n", i, errors[i]) | sortcmd
+		}
+	}
+	close(sortcmd)
+	print ""
+	print "free-format", "(" alength(freefmt) ")"
+	for(i in freefmt) {
+		if(i != "") {
+			printf("%8s %s\n", i, freefmt[i]) | sortcmd
 		}
 	}
 	close(sortcmd)
