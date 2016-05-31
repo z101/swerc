@@ -11,9 +11,9 @@ function alength(a,j) {
 
 BEGIN {
 	counters[""] = 0
-	req[""] = 0
 	ip[""] = 0
-	ua[""] = 0
+	ipreq[""] = 0
+	ipua[""] = 0
 	errors[""] = 0
 	freefmt[""] = 0
 	sortcmd = "sort -nr"
@@ -22,14 +22,14 @@ BEGIN {
 	counters["request"]++
 	if (match($0, /^\. \[[^\]]+\] \[[^\]]+\] /)) {
 		dtip = substr($0, RSTART, RLENGTH)
-		req[substr($0, RSTART + RLENGTH)]++
-		counters["get"]++
+		req = substr($0, RSTART + RLENGTH)
+		counters["requests"]++
 		if (match(dtip, /\[[^\]]+\]/))
 			reqdt = substr($0, RSTART + 1, RLENGTH - 2)
 		if (match(dtip, /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/)) {
 			client = substr(dtip, RSTART, RLENGTH)
 			ip[client]++
-			counters["ip hits"]++
+			ipreq[sprintf("%-15s %s", client, req)]++
 		}
 	}
 	if (length(startdt) == 0)
@@ -39,7 +39,8 @@ BEGIN {
 }
 /^	->/ {
 	if (match($0, /^	-> [uU][sS][eE][rR]-[aA][gG][eE][nN][tT]: +/)) {
-		ua[substr($0, RSTART + RLENGTH)]++
+		ua = substr($0, RSTART + RLENGTH)
+		ipua[sprintf("%-15s %s", client, ua)]++
 		counters["user agents"]++
 	}
 	next
@@ -67,27 +68,20 @@ END {
 	printf("    file size  : %.2f MB\n", lsz/1024/1024)
 	print ""
 	print "counters"
-	printf("    lines count    : %s\n", NR)
-	printf("    requests count : %s\n", counters["request"])
-	printf("    unique clients : %s\n", alength(ip))
-	print  "    get", "(" counters["get"] ")"
-	for(i in req) {
+	printf("    lines count   : %s\n", NR)
+	printf("    requests count: %s\n", counters["request"])
+	printf("    unique clients: %s\n", alength(ip))
+	print  "    requests", "(" counters["requests"] ")"
+	for(i in ipreq) {
 		if(i != "") {
-			printf("    %8s %s\n", req[i], i) | sortcmd
-		}
-	}
-	close(sortcmd)
-	print  "    ip hits", "(" counters["ip hits"] ")"
-	for(i in ip) {
-		if(i != "") {
-			printf("    %8s %-15s\n", ip[i], i) | sortcmd
+			printf("    %8s %s\n", ipreq[i], i) | sortcmd
 		}
 	}
 	close(sortcmd)
 	print  "    user agents", "(" counters["user agents"] ")"
-	for(i in ua) {
+	for(i in ipua) {
 		if(i != "") {
-			printf("    %8s %-15s\n", ua[i], i) | sortcmd
+			printf("    %8s %-15s\n", ipua[i], i) | sortcmd
 		}
 	}
 	close(sortcmd)

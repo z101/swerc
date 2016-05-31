@@ -7,8 +7,8 @@ fn get_bin_file {
 		status='Can''t find bin file: '$1
 }
 
-fn htmlize {
-	echo $1 | sed 's/ /\&nbsp;/g' | awk '{print $0 "<br />"}'
+fn htmlencode {
+	echo $1 | sed -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/"/&quot;/g'
 }
 
 fn render_block {
@@ -26,7 +26,7 @@ fn render_wslogrpt {
 	}
 	if not
 		rpt='Log file is not found.'
-	ifs='' { render_block 'web service log report' `{htmlize $rpt} }
+	ifs='' { render_block 'web service log report' '<pre>'`{ htmlencode $rpt }'</pre>' }
 }
 
 siteTitle=yumi
