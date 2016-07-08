@@ -12,45 +12,16 @@ body {
 	padding: 0;
 	margin: 0;
 }
-
-#header {
-	clear: both;
-	overflow: hidden;
-	padding: 2px 5px 5px 0px;
-}
-
-#headertitle {
-	color: #3465a4;
-}
-
-#headerinfo {
-	float: right;
-}
-
-#content {
-	clear: both;
-	overflow: hidden;
-}
-
-.block {
-	display: inline-block;
-	float: left;
-	margin: 0px 0px 20px 10px;
-}
-
-.block-header {
+a {
 	color: #eeeeec;
-	font-size: 1.1em;
-	margin-bottom: 10px;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
 }
 	</style> 
 	</head> 
 	<body>
-		<div id="header">
-			<span id="headerinfo"><span id="headertitle">%($"siteTitle%)</span> %($"siteSubtitle%)</span>
-		</div>
-		<div id="content">
 % run_handler $handler_body_main
-		</div>
 	</body>
 </html>
